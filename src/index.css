@@ -1,0 +1,58 @@
+:root {
+  --bg: #fff4dc;
+  --ink: #14110f;
+  --red: #e31c23;
+  --red-dark: #a31016;
+  --yellow: #ffc72c;
+  --tan: #6e5e4c;
+  --tile-bg: #f3e2b8;
+  --muted-border: #b99d6b;
+  --green: #0a7a3d;
+  --page-bg: #241e1a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--page-bg);
+  font-family: "Nunito", system-ui, sans-serif;
+  color: var(--ink);
+  -webkit-tap-highlight-color: transparent;
+}
+
+#root {
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+}
+
+a {
+  color: var(--red-dark);
+}
+a:hover {
+  color: var(--red);
+}
+
+button,
+input {
+  font-family: inherit;
+}
+
+@keyframes popin {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

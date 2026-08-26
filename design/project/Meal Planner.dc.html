@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#241e1a;font-family:'Nunito',system-ui,sans-serif}
+a{color:#A31016}
+a:hover{color:#E31C23}
+@keyframes popin{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:none}}
+</style>
+</helmet>
+<div style="width:100vw;min-height:100vh;background:#241e1a;display:flex;align-items:center;justify-content:center;padding:16px 10px;box-sizing:border-box;color:#14110F">
+<div style="width:min(420px,100%);height:min(900px,94vh);background:#FFF4DC;border:5px solid #0d0b0a;border-radius:42px;box-shadow:0 0 0 8px #0d0b0a,12px 16px 0 #000;overflow:hidden;position:relative;display:flex;flex-direction:column">
+<div style="position:absolute;top:8px;left:50%;transform:translateX(-50%);width:108px;height:20px;background:#0d0b0a;border-radius:16px;z-index:6"></div>
+<div style="display:flex;justify-content:space-between;padding:14px 22px 2px;font-size:12px;font-weight:900;z-index:2"><span>9:41</span><span>●●● LTE</span></div>
+
+<sc-if value="{{ isOnboarding }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;height:100%">
+<header style="background:#E31C23;color:#fff;text-align:center;padding:10px 16px 12px;border-bottom:4px solid #14110F">
+<div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:1.4px;line-height:1">WHAT'S FOR <span style="color:#FFC72C">TEA?</span></div>
+<div style="margin-top:3px;font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase">Your regulars · pick &amp; go</div>
+</header>
+<div style="padding:12px 16px 6px;text-align:center">
+<h1 style="font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:.4px;line-height:.95;margin:0">WHAT DO YOU USUALLY HAVE FOR TEA?</h1>
+<p style="font-size:13px;font-weight:800;color:#6E5E4C;margin-top:4px">Pick a few favourites or add your own. You can change them later.</p>
+<div style="min-height:18px;margin-top:6px;font-size:13px;font-weight:900;color:#A31016">{{ live }}</div>
+</div>
+<div style="flex:1;overflow-y:auto;padding:6px 12px 132px;-webkit-overflow-scrolling:touch">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+<sc-for list="{{ onboardTiles }}" as="tile" hint-placeholder-count="8">
+<button type="button" onClick="{{ tile.onToggle }}" style="{{ tile.btnStyle }}">
+<sc-if value="{{ tile.hasPhoto }}" hint-placeholder-val="{{ true }}">
+<img src="{{ tile.photo }}" alt="{{ tile.name }}" style="width:100%;height:168px;object-fit:cover;display:block;filter:saturate(1.08) contrast(1.05)" />
+</sc-if>
+<sc-if value="{{ tile.noPhoto }}" hint-placeholder-val="{{ false }}">
+<div style="width:100%;height:168px;display:grid;place-items:center;font-size:52px;background:#f3e2b8;color:#14110F">{{ tile.emoji }}</div>
+</sc-if>
+<span style="{{ tile.stampStyle }}">✓</span>
+<span style="position:absolute;left:0;right:0;bottom:0;padding:28px 8px 8px;background:linear-gradient(to top, rgba(0,0,0,.78), transparent);font-weight:900;font-size:14px;line-height:1.15;text-align:center;color:#fff">{{ tile.name }}</span>
+</button>
+</sc-for>
+<button type="button" onClick="{{ openOnboardAdd }}" style="border:3px solid #14110F;border-radius:16px;background:repeating-linear-gradient(135deg,#FFE58A 0 10px,#FFD23F 10px 20px);color:#14110F;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:168px;cursor:pointer">
+<div style="font-family:'Bebas Neue',sans-serif;font-size:54px;line-height:.8">+</div>
+<span style="font-weight:900;font-size:14px">Add your own</span>
+</button>
+</div>
+</div>
+<div style="position:absolute;left:0;right:0;bottom:0;padding:10px 14px max(16px,env(safe-area-inset-bottom));background:linear-gradient(to top,#FFF4DC 72%,transparent)">
+<div style="text-align:center;font-size:12px;font-weight:800;color:#6E5E4C;margin-bottom:8px;min-height:16px">{{ hint }}</div>
+<button type="button" onClick="{{ finishOnboarding }}" disabled="{{ ctaDisabled }}" style="{{ ctaStyle }}">LET'S EAT</button>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isHome }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;height:100%">
+<header style="background:#E31C23;color:#fff;text-align:center;padding:10px 16px 12px;border-bottom:4px solid #14110F">
+<div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:1.4px;line-height:1">FORGOTTEN <span style="color:#FFC72C">FAVOURITES</span></div>
+<div style="margin-top:3px;font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase">Oldest first · give one some love</div>
+</header>
+<div style="flex:1;overflow-y:auto;padding:16px 16px 92px">
+<sc-if value="{{ todayMeal }}" hint-placeholder-val="{{ true }}">
+<div onClick="{{ tapToday }}" style="border:3px solid #14110F;border-radius:16px;background:#fff;padding:12px;display:flex;align-items:center;gap:12px;box-shadow:3px 3px 0 rgba(0,0,0,.14);cursor:pointer;margin-bottom:20px">
+<sc-if value="{{ todayMeal.hasPhoto }}" hint-placeholder-val="{{ true }}"><img src="{{ todayMeal.photo }}" alt="" style="width:56px;height:56px;border-radius:12px;object-fit:cover" /></sc-if>
+<sc-if value="{{ todayMeal.noPhoto }}" hint-placeholder-val="{{ false }}"><div style="width:56px;height:56px;border-radius:12px;background:#f3e2b8;display:grid;place-items:center;font-size:28px">{{ todayMeal.emoji }}</div></sc-if>
+<div style="flex:1">
+<div style="font-size:11px;font-weight:900;letter-spacing:.6px;color:#6E5E4C;text-transform:uppercase">TODAY'S TEA</div>
+<div style="font-family:'Bebas Neue',sans-serif;font-size:22px">{{ todayMeal.name }}</div>
+</div>
+<div style="{{ todayBadgeStyle }}">{{ todayBadgeLabel }}</div>
+</div>
+</sc-if>
+<h2 style="font-family:'Bebas Neue',sans-serif;font-size:26px;margin:4px 0 12px">YOUR NEGLECTED LOT</h2>
+<sc-if value="{{ hero }}" hint-placeholder-val="{{ true }}">
+<div style="position:relative;border:3px solid #14110F;border-radius:16px;overflow:hidden;box-shadow:3px 3px 0 rgba(0,0,0,.14);margin-bottom:14px">
+<sc-if value="{{ hero.hasPhoto }}" hint-placeholder-val="{{ true }}"><img src="{{ hero.photo }}" alt="{{ hero.name }}" style="width:100%;height:180px;object-fit:cover;display:block" /></sc-if>
+<sc-if value="{{ hero.noPhoto }}" hint-placeholder-val="{{ false }}"><div style="width:100%;height:180px;display:grid;place-items:center;font-size:64px;background:#f3e2b8">{{ hero.emoji }}</div></sc-if>
+<div style="position:absolute;left:0;right:0;bottom:0;padding:34px 12px 10px;background:linear-gradient(to top,rgba(0,0,0,.8),transparent);color:#fff">
+<div style="font-weight:900;font-size:12px;letter-spacing:.6px;color:#FFC72C">{{ hero.badge }}</div>
+<div style="font-family:'Bebas Neue',sans-serif;font-size:24px">{{ hero.name }}</div>
+</div>
+</div>
+</sc-if>
+<div style="display:flex;flex-direction:column;gap:8px">
+<sc-for list="{{ restMeals }}" as="m" hint-placeholder-count="4">
+<div style="display:flex;align-items:center;gap:10px;border:2.5px solid #14110F;background:#fff;border-radius:14px;padding:8px">
+<sc-if value="{{ m.hasPhoto }}" hint-placeholder-val="{{ true }}"><img src="{{ m.photo }}" alt="" style="width:44px;height:44px;border-radius:10px;object-fit:cover" /></sc-if>
+<sc-if value="{{ m.noPhoto }}" hint-placeholder-val="{{ false }}"><div style="width:44px;height:44px;border-radius:10px;background:#f3e2b8;display:grid;place-items:center;font-size:22px">{{ m.emoji }}</div></sc-if>
+<div style="flex:1;font-weight:900;font-size:14px">{{ m.name }}</div>
+<div style="font-size:11px;font-weight:900;color:#6E5E4C;background:#f3e2b8;border-radius:999px;padding:4px 10px;white-space:nowrap">{{ m.badge }}</div>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isPlanner }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;height:100%">
+<header style="background:#E31C23;color:#fff;text-align:center;padding:10px 16px 12px;border-bottom:4px solid #14110F">
+<div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:1.4px;line-height:1">WEEK <span style="color:#FFC72C">PLANNER</span></div>
+<div style="margin-top:3px;font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase">Monday to Sunday, your tea</div>
+</header>
+<div style="flex:1;overflow-y:auto;padding:14px 16px 92px;display:flex;flex-direction:column;gap:10px">
+<sc-for list="{{ plannerRows }}" as="row" hint-placeholder-count="7">
+<div onClick="{{ row.onTap }}" style="{{ row.cardStyle }}">
+<div style="width:38px;font-family:'Bebas Neue',sans-serif;font-size:16px;flex:none">{{ row.day }}</div>
+<sc-if value="{{ row.mealObj }}" hint-placeholder-val="{{ true }}">
+<sc-if value="{{ row.mealObj.hasPhoto }}" hint-placeholder-val="{{ true }}"><img src="{{ row.mealObj.photo }}" alt="" style="width:40px;height:40px;border-radius:10px;object-fit:cover" /></sc-if>
+<sc-if value="{{ row.mealObj.noPhoto }}" hint-placeholder-val="{{ false }}"><div style="width:40px;height:40px;border-radius:10px;background:#f3e2b8;display:grid;place-items:center;font-size:20px">{{ row.mealObj.emoji }}</div></sc-if>
+<div style="flex:1;font-weight:900;font-size:14px">{{ row.mealObj.name }}</div>
+</sc-if>
+<sc-if value="{{ row.empty }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;font-weight:800;font-size:13px;color:#6E5E4C;font-style:italic">Nothing planned</div>
+</sc-if>
+<div style="{{ row.badgeStyle }}">{{ row.badgeLabel }}</div>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isMeals }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;height:100%">
+<header style="background:#E31C23;color:#fff;text-align:center;padding:10px 16px 12px;border-bottom:4px solid #14110F">
+<div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:1.4px;line-height:1">YOUR <span style="color:#FFC72C">MEALS</span></div>
+<div style="margin-top:3px;font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase">Add, rename, swap the emoji</div>
+</header>
+<div style="flex:1;overflow-y:auto;padding:14px 16px 92px;display:flex;flex-direction:column;gap:8px">
+<sc-for list="{{ mealsList }}" as="m" hint-placeholder-count="6">
+<div style="display:flex;align-items:center;gap:10px;border:2.5px solid #14110F;background:#fff;border-radius:14px;padding:8px">
+<sc-if value="{{ m.hasPhoto }}" hint-placeholder-val="{{ true }}"><img src="{{ m.photo }}" alt="" style="width:44px;height:44px;border-radius:10px;object-fit:cover" /></sc-if>
+<sc-if value="{{ m.noPhoto }}" hint-placeholder-val="{{ false }}"><div style="width:44px;height:44px;border-radius:10px;background:#f3e2b8;display:grid;place-items:center;font-size:22px">{{ m.emoji }}</div></sc-if>
+<div style="flex:1">
+<div style="font-weight:900;font-size:14px">{{ m.name }}</div>
+<div style="font-size:11px;font-weight:800;color:#6E5E4C">{{ m.badge }}</div>
+</div>
+<button type="button" onClick="{{ m.onEdit }}" style="width:36px;height:36px;border:2px solid #14110F;border-radius:10px;background:#FFC72C;font-size:15px;cursor:pointer">✎</button>
+<button type="button" onClick="{{ m.onDelete }}" style="width:36px;height:36px;border:2px solid #14110F;border-radius:10px;background:#fff;font-size:15px;cursor:pointer;color:#A31016">✕</button>
+</div>
+</sc-for>
+<button type="button" onClick="{{ openMealsAdd }}" style="{{ ctaStyle }};margin-top:6px">+ ADD A MEAL</button>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ showTabs }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;left:0;right:0;bottom:0;display:flex;gap:8px;padding:10px 14px max(10px,env(safe-area-inset-bottom));background:#FFF4DC;border-top:3px solid #14110F">
+<button type="button" onClick="{{ goHome }}" style="{{ tabHomeStyle }}">HOME</button>
+<button type="button" onClick="{{ goPlanner }}" style="{{ tabPlannerStyle }}">WEEK</button>
+<button type="button" onClick="{{ goMeals }}" style="{{ tabMealsStyle }}">MEALS</button>
+</div>
+</sc-if>
+
+<sc-if value="{{ sheet }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;inset:0;background:rgba(12,8,6,.55);display:flex;align-items:flex-end;z-index:20">
+<div style="width:100%;background:#FFF4DC;border-top:4px solid #14110F;border-radius:22px 22px 0 0;padding:12px 14px calc(max(16px,env(safe-area-inset-bottom)) + 10px)">
+<div style="width:46px;height:5px;background:#14110F;border-radius:99px;margin:0 auto 10px"></div>
+<h2 style="font-family:'Bebas Neue',sans-serif;font-size:26px;text-align:center;letter-spacing:.4px;margin:0">{{ sheetTitle }}</h2>
+<p style="text-align:center;font-size:13px;font-weight:800;color:#6E5E4C;margin:2px 0 10px">Name it. Emoji optional — we'll use 🍽️.</p>
+<div style="display:flex;gap:8px">
+<button type="button" onClick="{{ focusNothing }}" style="width:62px;border:3px solid #14110F;border-radius:12px;background:#FFC72C;font-size:26px">{{ sheet.emoji }}</button>
+<input value="{{ sheet.name }}" onChange="{{ setSheetName }}" maxlength="28" placeholder="e.g. Egg &amp; chips" autocomplete="off" style="flex:1;padding:12px;background:#fff;border:3px solid #14110F;border-radius:12px;font:inherit;font-weight:900;font-size:16px" />
+</div>
+<div style="display:flex;gap:6px;overflow-x:auto;padding:10px 0 6px">
+<sc-for list="{{ sheetEmojis }}" as="opt" hint-placeholder-count="10">
+<button type="button" onClick="{{ opt.onClick }}" style="{{ opt.style }}">{{ opt.e }}</button>
+</sc-for>
+</div>
+<div style="color:#A31016;font-weight:800;font-size:13px;min-height:18px;text-align:center">{{ sheet.error }}</div>
+<div style="display:flex;gap:8px;margin-top:4px">
+<button type="button" onClick="{{ closeSheet }}" style="flex:1;padding:12px 8px;cursor:pointer;border:3px solid #14110F;border-radius:12px;font-weight:900;background:#fff">Cancel</button>
+<button type="button" onClick="{{ saveSheet }}" style="flex:1;padding:12px 8px;cursor:pointer;border:3px solid #14110F;border-radius:12px;font-weight:900;background:#E31C23;color:#fff;font-family:'Bebas Neue',sans-serif;font-size:20px">SAVE</button>
+</div>
+<sc-if value="{{ sheetShowDelete }}" hint-placeholder-val="{{ false }}">
+<div style="text-align:center;margin-top:10px"><button type="button" onClick="{{ deleteFromSheet }}" style="border:none;background:none;color:#A31016;font-weight:800;font-size:13px;text-decoration:underline;cursor:pointer">Delete this meal</button></div>
+</sc-if>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ confirmAsk }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;inset:0;background:rgba(12,8,6,.55);display:flex;align-items:flex-end;z-index:21">
+<div style="width:100%;background:#FFF4DC;border-top:4px solid #14110F;border-radius:22px 22px 0 0;padding:20px 18px calc(max(16px,env(safe-area-inset-bottom)) + 14px);text-align:center">
+<div style="width:46px;height:5px;background:#14110F;border-radius:99px;margin:0 auto 14px"></div>
+<h2 style="font-family:'Bebas Neue',sans-serif;font-size:28px;margin:0">DID YOU HAVE {{ confirmAskName }}?</h2>
+<p style="font-weight:800;color:#6E5E4C;margin-top:4px">Be honest. We won't judge. Much.</p>
+<div style="display:flex;gap:10px;margin-top:16px">
+<button type="button" onClick="{{ confirmNo }}" style="flex:1;border:3px solid #14110F;background:#fff;border-radius:12px;padding:14px 6px;font-family:'Bebas Neue',sans-serif;font-size:17px;cursor:pointer">HAD SOMETHING ELSE</button>
+<button type="button" onClick="{{ confirmYes }}" style="flex:1;border:3px solid #14110F;background:#E31C23;color:#fff;border-radius:12px;padding:14px 6px;font-family:'Bebas Neue',sans-serif;font-size:17px;box-shadow:0 4px 0 #A31016;cursor:pointer">YEAH, SORTED</button>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ picker }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;inset:0;background:rgba(12,8,6,.55);display:flex;align-items:flex-end;z-index:22">
+<div style="width:100%;max-height:82%;background:#FFF4DC;border-top:4px solid #14110F;border-radius:22px 22px 0 0;padding:12px 14px calc(max(16px,env(safe-area-inset-bottom)) + 10px);display:flex;flex-direction:column">
+<div style="width:46px;height:5px;background:#14110F;border-radius:99px;margin:0 auto 10px"></div>
+<div style="display:flex;align-items:center;justify-content:center;position:relative">
+<h2 style="font-family:'Bebas Neue',sans-serif;font-size:22px;text-align:center;margin:0">{{ pickerTitle }}</h2>
+<button type="button" onClick="{{ closePicker }}" style="position:absolute;right:0;border:none;background:none;font-weight:900;color:#6E5E4C;cursor:pointer;font-size:13px">CANCEL</button>
+</div>
+<div style="flex:1;overflow-y:auto;margin-top:10px">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+<sc-for list="{{ pickerMeals }}" as="pm" hint-placeholder-count="6">
+<button type="button" onClick="{{ pm.onPick }}" style="border:3px solid #14110F;border-radius:14px;overflow:hidden;padding:0;position:relative;min-height:120px;cursor:pointer;background:#fff;box-shadow:3px 3px 0 rgba(0,0,0,.14)">
+<sc-if value="{{ pm.hasPhoto }}" hint-placeholder-val="{{ true }}"><img src="{{ pm.photo }}" alt="" style="width:100%;height:120px;object-fit:cover;display:block" /></sc-if>
+<sc-if value="{{ pm.noPhoto }}" hint-placeholder-val="{{ false }}"><div style="width:100%;height:120px;display:grid;place-items:center;font-size:40px;background:#f3e2b8">{{ pm.emoji }}</div></sc-if>
+<span style="position:absolute;left:0;right:0;bottom:0;padding:22px 6px 6px;background:linear-gradient(to top,rgba(0,0,0,.78),transparent);font-weight:900;font-size:13px;text-align:center;color:#fff">{{ pm.name }}</span>
+</button>
+</sc-for>
+<button type="button" onClick="{{ openPlanAddFromPicker }}" style="border:3px solid #14110F;border-radius:14px;background:repeating-linear-gradient(135deg,#FFE58A 0 10px,#FFD23F 10px 20px);color:#14110F;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:120px;cursor:pointer">
+<div style="font-family:'Bebas Neue',sans-serif;font-size:36px;line-height:.8">+</div>
+<span style="font-weight:900;font-size:12px">Add your own</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ splash }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;inset:0;background:#E31C23;color:#fff;display:grid;place-items:center;text-align:center;z-index:30">
+<div><h2 style="font-family:'Bebas Neue',sans-serif;font-size:64px;letter-spacing:1px;transform:rotate(-6deg);text-shadow:4px 4px 0 #14110F;margin:0">SORTED.</h2><p style="font-weight:800;margin-top:8px">Tucking your teas away…</p></div>
+</div>
+</sc-if>
+
+</div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const CATALOG = [
+ {name:"Sausage & Chips", emoji:"🌭", photo:"https://images.pexels.com/photos/1893556/pexels-photo-1893556.jpeg?auto=compress&cs=tinysrgb&w=800", def:2},
+ {name:"Chicken Curry", emoji:"🍛", photo:"https://images.pexels.com/photos/2474661/pexels-photo-2474661.jpeg?auto=compress&cs=tinysrgb&w=800", def:21},
+ {name:"Lasagne", emoji:"🍝", photo:"https://images.pexels.com/photos/4079520/pexels-photo-4079520.jpeg?auto=compress&cs=tinysrgb&w=800", def:9},
+ {name:"Cottage Pie", emoji:"🥧", photo:"https://images.pexels.com/photos/675951/pexels-photo-675951.jpeg?auto=compress&cs=tinysrgb&w=800", def:30},
+ {name:"Fish Pie", emoji:"🐟", photo:"https://images.pexels.com/photos/262959/pexels-photo-262959.jpeg?auto=compress&cs=tinysrgb&w=800", def:14},
+ {name:"Chilli", emoji:"🌶️", photo:"https://images.pexels.com/photos/5737247/pexels-photo-5737247.jpeg?auto=compress&cs=tinysrgb&w=800", def:6},
+ {name:"Pizza", emoji:"🍕", photo:"https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=80", def:3},
+ {name:"Roast Dinner", emoji:"🍗", photo:"https://images.pexels.com/photos/2338407/pexels-photo-2338407.jpeg?auto=compress&cs=tinysrgb&w=800", def:45},
+ {name:"Stir Fry", emoji:"🥡", photo:"https://images.pexels.com/photos/2347311/pexels-photo-2347311.jpeg?auto=compress&cs=tinysrgb&w=800", def:12},
+ {name:"Jacket Potato", emoji:"🥔", photo:"https://images.pexels.com/photos/2284166/pexels-photo-2284166.jpeg?auto=compress&cs=tinysrgb&w=800", def:18}
+];
+const EMOJIS = ["🍽️","🌭","🍛","🍝","🥧","🐟","🌶️","🍕","🍗","🥡","🥔","🍔","🥗","🍜","🌮","🥘"];
+const DAY_SHORT = ["MON","TUE","WED","THU","FRI","SAT","SUN"];
+const DAY_FULL = ["MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY","SATURDAY","SUNDAY"];
+const CTA_STYLE = "width:100%;border:3px solid #14110F;background:#E31C23;color:#fff;font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1px;padding:14px 12px 12px;border-radius:14px;box-shadow:0 5px 0 #A31016;cursor:pointer";
+const CTA_STYLE_DISABLED = "width:100%;border:3px solid #14110F;background:#CDB897;color:#5A4C3B;font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1px;padding:14px 12px 12px;border-radius:14px;box-shadow:0 5px 0 #9A8668;cursor:not-allowed";
+
+class Component extends DCLogic {
+  state = {
+    screen: 'onboarding',
+    onboardCatalog: CATALOG.map((c,i)=>({id:'c'+i, ...c})),
+    selected: {},
+    meals: [],
+    weekPlan: [],
+    todayIndex: 3,
+    splash: false,
+    sheet: null,
+    confirmAsk: null,
+    picker: null,
+    nextMealId: 1000,
+  };
+
+  norm(s){ return s.trim().replace(/\s+/g," ").toLowerCase(); }
+  dayFull(i){ return DAY_FULL[i]; }
+  badgeText(n){ return n<=0 ? "TODAY" : n===1 ? "1 DAY AGO" : `${n} DAYS AGO`; }
+
+  toggleSelect(key){
+    this.setState(s=>{ const sel={...s.selected}; if(sel[key]) delete sel[key]; else sel[key]=true; return {selected:sel}; });
+  }
+  openOnboardAdd(){ this.setState({sheet:{context:'onboardAdd', name:'', emoji:'🍽️', error:''}}); }
+  openMealsAdd(){ this.setState({sheet:{context:'mealsAdd', name:'', emoji:'🍽️', error:''}}); }
+  openMealsEdit(meal){ this.setState({sheet:{context:'mealsEdit', mealId:meal.id, name:meal.name, emoji:meal.emoji, error:''}}); }
+  openPlanAdd(dayIndex, purpose){ this.setState({sheet:{context:'planAdd', dayIndex, purpose, name:'', emoji:'🍽️', error:''}}); }
+  closeSheet(){ this.setState({sheet:null}); }
+  setSheetName(v){ this.setState(s=>({sheet:{...s.sheet, name:v, error:''}})); }
+  setSheetEmoji(e){ this.setState(s=>({sheet:{...s.sheet, emoji:e}})); }
+  deleteFromSheet(){ const id=this.state.sheet && this.state.sheet.mealId; if(id) this.deleteMeal(id); this.setState({sheet:null}); }
+
+  saveSheet(){
+    const sheet=this.state.sheet; if(!sheet) return;
+    const name=(sheet.name||'').trim().replace(/\s+/g," ");
+    if(!name){ this.setState(s=>({sheet:{...s.sheet,error:"Give it a name first."}})); return; }
+    const key=this.norm(name);
+    if(sheet.context==='onboardAdd'){
+      if(this.state.onboardCatalog.some(m=>this.norm(m.name)===key)){ this.setState(s=>({sheet:{...s.sheet,error:"You've already got that one."}})); return; }
+      const item={id:'custom'+Date.now(), name, emoji:sheet.emoji||'🍽️', photo:null, def:5};
+      this.setState(s=>({onboardCatalog:[...s.onboardCatalog,item], selected:{...s.selected,[key]:true}, sheet:null}));
+      return;
+    }
+    if(sheet.context==='mealsAdd' || sheet.context==='planAdd'){
+      if(this.state.meals.some(m=>this.norm(m.name)===key)){ this.setState(s=>({sheet:{...s.sheet,error:"You've already got that one."}})); return; }
+      const id=this.state.nextMealId;
+      const meal={id, name, emoji:sheet.emoji||'🍽️', photo:null, lastEaten:0};
+      this.setState(s=>{
+        const meals=[...s.meals, meal];
+        let weekPlan=s.weekPlan;
+        if(sheet.context==='planAdd'){
+          weekPlan = s.weekPlan.map((row,i)=> i===sheet.dayIndex ? {...row, mealId:id, status:'planned'} : row);
+        }
+        return {meals, weekPlan, nextMealId:id+1, sheet:null};
+      });
+      return;
+    }
+    if(sheet.context==='mealsEdit'){
+      this.setState(s=>({meals: s.meals.map(m=> m.id===sheet.mealId ? {...m,name,emoji:sheet.emoji||m.emoji} : m), sheet:null}));
+      return;
+    }
+  }
+
+  deleteMeal(id){
+    this.setState(s=>({
+      meals: s.meals.filter(m=>m.id!==id),
+      weekPlan: s.weekPlan.map(row=> row.mealId===id ? {...row, mealId:null, status:'empty'} : row)
+    }));
+  }
+
+  buildWeekPlan(meals){
+    return DAY_SHORT.map((d,i)=>{
+      if(i===5) return {day:d, mealId:null, status:'empty'};
+      const meal = meals[i % meals.length];
+      const status = i<2 ? 'eaten' : (i===2 ? 'skipped' : 'planned');
+      return {day:d, mealId: meal.id, status};
+    });
+  }
+
+  finishOnboarding(){
+    const selectedItems = this.state.onboardCatalog.filter(m=>this.state.selected[this.norm(m.name)]);
+    if(!selectedItems.length) return;
+    const meals = selectedItems.map((m,i)=>({id:i+1, name:m.name, emoji:m.emoji, photo:m.photo||null, lastEaten: m.def ?? 5}));
+    const weekPlan = this.buildWeekPlan(meals);
+    this.setState({splash:true, meals, weekPlan, nextMealId: meals.length+1});
+    setTimeout(()=>{ this.setState({splash:false, screen:'home'}); }, 700);
+  }
+
+  tapToday(){
+    const row=this.state.weekPlan[this.state.todayIndex];
+    if(!row || row.status!=='planned') return;
+    const meal=this.state.meals.find(m=>m.id===row.mealId);
+    this.setState({confirmAsk:{dayIndex:this.state.todayIndex, mealName: meal ? meal.name : ''}});
+  }
+  tapDay(i){
+    if(i===this.state.todayIndex){ this.tapToday(); return; }
+    const row=this.state.weekPlan[i];
+    if(i>this.state.todayIndex || row.status==='empty'){ this.setState({picker:{dayIndex:i, purpose:'planDay'}}); }
+  }
+  confirmYes(){
+    const ca=this.state.confirmAsk; if(!ca) return;
+    this.setState(s=>{
+      const row=s.weekPlan[ca.dayIndex];
+      return {
+        weekPlan: s.weekPlan.map((r,i)=> i===ca.dayIndex ? {...r,status:'eaten'} : r),
+        meals: s.meals.map(m=> m.id===row.mealId ? {...m,lastEaten:0} : m),
+        confirmAsk:null
+      };
+    });
+  }
+  confirmNo(){
+    const ca=this.state.confirmAsk; if(!ca) return;
+    this.setState({confirmAsk:null, picker:{dayIndex:ca.dayIndex, purpose:'confirmNo'}});
+  }
+  closePicker(){ this.setState({picker:null}); }
+  pickMeal(mealId){
+    const p=this.state.picker; if(!p) return;
+    const newStatus = p.purpose==='confirmNo' ? 'eaten' : 'planned';
+    this.setState(s=>({
+      weekPlan: s.weekPlan.map((r,i)=> i===p.dayIndex ? {...r, mealId, status:newStatus} : r),
+      meals: p.purpose==='confirmNo' ? s.meals.map(m=> m.id===mealId ? {...m,lastEaten:0} : m) : s.meals,
+      picker:null
+    }));
+  }
+  openPlanAddFromPicker(){
+    const p=this.state.picker; if(!p) return;
+    this.setState({picker:null});
+    this.openPlanAdd(p.dayIndex, p.purpose);
+  }
+  setScreen(sc){ this.setState({screen:sc}); }
+
+  thumb(m){ return { ...m, hasPhoto: !!m.photo, noPhoto: !m.photo }; }
+
+  renderVals(){
+    const s=this.state;
+    const isOnboarding = s.screen==='onboarding';
+    const isHome = s.screen==='home';
+    const isPlanner = s.screen==='planner';
+    const isMeals = s.screen==='meals';
+
+    const onboardTiles = s.onboardCatalog.map(m=>{
+      const key=this.norm(m.name);
+      const on = !!s.selected[key];
+      const hasPhoto = !!m.photo;
+      return {
+        ...m, key, hasPhoto, noPhoto: !hasPhoto,
+        onToggle: ()=>this.toggleSelect(key),
+        btnStyle: `appearance:none;border:3px solid #14110F;background:#fff;border-radius:16px;overflow:hidden;cursor:pointer;padding:0;position:relative;min-height:168px;text-align:left;color:#fff;box-shadow:${on ? '0 0 0 3px #E31C23, 3px 3px 0 rgba(0,0,0,.18)' : '3px 3px 0 rgba(0,0,0,.14)'}`,
+        stampStyle: `position:absolute;top:8px;right:8px;width:30px;height:30px;border:2.5px solid ${on?'#FFC72C':'#fff'};border-radius:50%;background:${on?'#E31C23':'rgba(0,0,0,.35)'};display:grid;place-items:center;font-size:16px;font-weight:900;color:#fff;transform:${on?'scale(1) rotate(-8deg)':'scale(.6)'};opacity:${on?1:0};transition:all .2s ease`
+      };
+    });
+    const selectedCount = Object.keys(s.selected).length;
+    const hint = selectedCount===0 ? "Pick at least one to continue" : selectedCount===1 ? "1 regular locked in" : `${selectedCount} regulars locked in`;
+    const live = selectedCount===0 ? "" : selectedCount===1 ? "Nice. One down." : selectedCount>=4 ? "Proper menu, that." : "That's more like it.";
+
+    const neglected = [...s.meals].sort((a,b)=>b.lastEaten-a.lastEaten).map(m=>({...this.thumb(m), badge:this.badgeText(m.lastEaten)}));
+    const hero = neglected[0] || null;
+    const restMeals = neglected.slice(1);
+    const todayRowRaw = s.weekPlan[s.todayIndex] || null;
+    const todayMealRaw = todayRowRaw ? s.meals.find(m=>m.id===todayRowRaw.mealId) : null;
+    const todayMeal = todayMealRaw ? this.thumb(todayMealRaw) : null;
+    const todayIsPlanned = todayRowRaw && todayRowRaw.status==='planned';
+    const todayBadgeStyle = todayIsPlanned
+      ? "background:#FFC72C;border:2px solid #14110F;border-radius:999px;padding:6px 12px;font-weight:900;font-size:11px;white-space:nowrap"
+      : "color:#0a7a3d;font-weight:900;font-size:13px;white-space:nowrap";
+    const todayBadgeLabel = todayIsPlanned ? "TAP TO CONFIRM" : "✓ SORTED";
+
+    const plannerRows = s.weekPlan.map((row,i)=>{
+      const mealObjRaw = s.meals.find(m=>m.id===row.mealId) || null;
+      const mealObj = mealObjRaw ? this.thumb(mealObjRaw) : null;
+      const isToday = i===s.todayIndex;
+      const tappable = isToday ? row.status==='planned' : (i>s.todayIndex || row.status==='empty');
+      let border='#14110F', bg='#fff', badgeBg='transparent', badgeColor='#14110F', label='', opacity='1';
+      if(row.status==='eaten'){ badgeColor='#0a7a3d'; label='✓ HAD IT'; }
+      else if(row.status==='skipped'){ opacity='.55'; badgeColor='#6E5E4C'; label='SKIPPED'; }
+      else if(row.status==='empty'){ border='#B99D6B'; label='+ ADD A MEAL'; badgeColor='#B99D6B'; }
+      else if(row.status==='planned' && isToday){ border='#E31C23'; badgeBg='#FFC72C'; badgeColor='#14110F'; label='TAP TO CONFIRM'; }
+      else { label='PLANNED · TAP TO CHANGE'; badgeColor='#6E5E4C'; }
+      const cardStyle = `display:flex;align-items:center;gap:10px;border:2.5px ${row.status==='empty'?'dashed':'solid'} ${border};background:${bg};border-radius:14px;padding:10px 12px;opacity:${opacity};cursor:${tappable?'pointer':'default'}`;
+      const badgeStyle = `font-size:11px;font-weight:900;color:${badgeColor};background:${badgeBg};border-radius:999px;padding:${badgeBg!=='transparent'?'4px 10px':'0'};white-space:nowrap;flex:none`;
+      return { ...row, idx:i, mealObj, empty: !mealObj, badgeStyle, badgeLabel:label, cardStyle, onTap: ()=>this.tapDay(i) };
+    });
+
+    const mealsList = s.meals.map(m=>({ ...this.thumb(m), badge:`Last had ${this.badgeText(m.lastEaten).toLowerCase()}`, onEdit:()=>this.openMealsEdit(m), onDelete:()=>this.deleteMeal(m.id) }));
+
+    const sheetTitle = s.sheet ? (s.sheet.context==='mealsEdit' ? 'EDIT MEAL' : 'ADD YOUR OWN') : '';
+    const sheetShowDelete = !!(s.sheet && s.sheet.context==='mealsEdit');
+    const sheetEmojis = s.sheet ? EMOJIS.map(e=>({ e, style:`flex:0 0 42px;height:42px;border:2px solid #14110F;border-radius:10px;font-size:20px;cursor:pointer;background:${s.sheet.emoji===e?'#FFC72C':'#fff'}`, onClick:()=>this.setSheetEmoji(e) })) : [];
+
+    const confirmAskName = s.confirmAsk ? s.confirmAsk.mealName : '';
+
+    const pickerTitle = s.picker ? (s.picker.purpose==='confirmNo' ? "WHAT DID YOU ACTUALLY HAVE?" : `PICK FOR ${this.dayFull(s.picker.dayIndex)}`) : '';
+    const pickerMeals = s.meals.map(m=>({ ...this.thumb(m), onPick:()=>this.pickMeal(m.id) }));
+
+    const tabBase = "flex:1;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:.6px;padding:11px 4px;border-radius:12px;cursor:pointer";
+    const tabActive = tabBase + ";border:3px solid #14110F;background:#E31C23;color:#fff;box-shadow:0 3px 0 #A31016";
+    const tabInactive = tabBase + ";border:3px solid transparent;background:transparent;color:#14110F";
+
+    return {
+      isOnboarding, isHome, isPlanner, isMeals, showTabs: !isOnboarding,
+      onboardTiles, hint, live, ctaDisabled: selectedCount===0, ctaStyle: selectedCount===0 ? CTA_STYLE_DISABLED : CTA_STYLE,
+      openOnboardAdd: ()=>this.openOnboardAdd(), finishOnboarding: ()=>this.finishOnboarding(),
+      splash: s.splash,
+
+      hero, restMeals, todayMeal, todayIsPlanned, todayBadgeStyle, todayBadgeLabel, tapToday: ()=>this.tapToday(),
+
+      plannerRows,
+
+      mealsList, openMealsAdd: ()=>this.openMealsAdd(),
+
+      goHome: ()=>this.setScreen('home'), goPlanner: ()=>this.setScreen('planner'), goMeals: ()=>this.setScreen('meals'),
+      tabHomeStyle: isHome ? tabActive : tabInactive,
+      tabPlannerStyle: isPlanner ? tabActive : tabInactive,
+      tabMealsStyle: isMeals ? tabActive : tabInactive,
+
+      sheet: s.sheet, sheetTitle, sheetShowDelete, sheetEmojis,
+      setSheetName: (e)=>this.setSheetName(e.target.value),
+      saveSheet: ()=>this.saveSheet(), closeSheet: ()=>this.closeSheet(), deleteFromSheet: ()=>this.deleteFromSheet(),
+      focusNothing: ()=>{},
+
+      confirmAsk: s.confirmAsk, confirmAskName, confirmYes: ()=>this.confirmYes(), confirmNo: ()=>this.confirmNo(),
+
+      picker: s.picker, pickerTitle, pickerMeals, closePicker: ()=>this.closePicker(), openPlanAddFromPicker: ()=>this.openPlanAddFromPicker(),
+    };
+  }
+}
+</script>
+</body>
+</html>

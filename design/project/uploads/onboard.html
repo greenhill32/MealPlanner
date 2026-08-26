@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <title>What’s for Tea? — Onboarding</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://images.pexels.com" />
+  <link rel="preconnect" href="https://images.unsplash.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #FFF4DC;
+      --red: #E31C23;
+      --red-deep: #A31016;
+      --yellow: #FFC72C;
+      --ink: #14110F;
+      --muted: #6E5E4C;
+      --safe: max(16px, env(safe-area-inset-bottom));
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: "Nunito", system-ui, sans-serif;
+      background: #241e1a;
+      display: grid;
+      place-items: center;
+      padding: 16px 10px;
+      color: var(--ink);
+    }
+    .phone {
+      width: min(420px, 100%);
+      height: min(900px, 94vh);
+      background: var(--bg);
+      border: 5px solid #0d0b0a;
+      border-radius: 42px;
+      box-shadow: 0 0 0 8px #0d0b0a, 12px 16px 0 #000;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    .notch {
+      position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
+      width: 108px; height: 20px; background: #0d0b0a; border-radius: 16px; z-index: 6;
+    }
+    .status {
+      display: flex; justify-content: space-between;
+      padding: 14px 22px 2px; font-size: 12px; font-weight: 900; z-index: 2;
+    }
+
+    .menu-head {
+      background: var(--red);
+      color: #fff;
+      text-align: center;
+      padding: 10px 16px 12px;
+      border-bottom: 4px solid var(--ink);
+    }
+    .brand { font-family: "Bebas Neue", sans-serif; font-size: 28px; letter-spacing: 1.4px; line-height: 1; }
+    .brand em { color: var(--yellow); font-style: normal; }
+    .tag { margin-top: 3px; font-size: 11px; font-weight: 800; letter-spacing: .6px; text-transform: uppercase; }
+
+    .copy { padding: 12px 16px 6px; text-align: center; }
+    .copy h1 { font-family: "Bebas Neue", sans-serif; font-size: 32px; letter-spacing: .4px; line-height: .95; }
+    .copy p { font-size: 13px; font-weight: 800; color: var(--muted); margin-top: 4px; }
+    .live { min-height: 18px; margin-top: 6px; font-size: 13px; font-weight: 900; color: var(--red-deep); }
+
+    .board { flex: 1; overflow-y: auto; padding: 6px 12px 132px; -webkit-overflow-scrolling: touch; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    .tile {
+      appearance: none; border: 3px solid var(--ink); background: #fff;
+      border-radius: 16px; overflow: hidden; cursor: pointer; padding: 0;
+      position: relative; min-height: 168px; text-align: left; color: #fff;
+      box-shadow: 3px 3px 0 rgba(0,0,0,.14);
+      animation: popin .38s cubic-bezier(.2,1.1,.3,1) both;
+      transition: transform .14s cubic-bezier(.2,1.4,.3,1), box-shadow .14s ease;
+    }
+    .tile:nth-child(1){animation-delay:.02s} .tile:nth-child(2){animation-delay:.05s}
+    .tile:nth-child(3){animation-delay:.08s} .tile:nth-child(4){animation-delay:.11s}
+    .tile:nth-child(5){animation-delay:.14s} .tile:nth-child(6){animation-delay:.17s}
+    .tile:nth-child(7){animation-delay:.2s} .tile:nth-child(8){animation-delay:.23s}
+    .tile:nth-child(9){animation-delay:.26s} .tile:nth-child(10){animation-delay:.29s}
+    .tile:nth-child(11){animation-delay:.32s}
+    @keyframes popin { from { opacity:0; transform:translateY(10px) scale(.96); } to { opacity:1; transform:none; } }
+
+    .tile:active { transform: scale(.96); }
+    .tile img, .tile .ph {
+      width: 100%; height: 168px; object-fit: cover; display: block;
+      filter: saturate(1.08) contrast(1.05);
+    }
+    .tile .ph {
+      display: grid; place-items: center; font-size: 52px; background: #f3e2b8; color: var(--ink);
+    }
+    .cap {
+      position: absolute; left: 0; right: 0; bottom: 0;
+      padding: 28px 8px 8px;
+      background: linear-gradient(to top, rgba(0,0,0,.78), transparent);
+      font-weight: 900; font-size: 14px; line-height: 1.15; text-align: center;
+    }
+    .stamp {
+      position: absolute; top: 8px; right: 8px; width: 30px; height: 30px;
+      border: 2.5px solid #fff; border-radius: 50%;
+      background: rgba(0,0,0,.35); display: grid; place-items: center;
+      font-size: 16px; font-weight: 900; transform: scale(.6); opacity: 0;
+    }
+    .tile.selected {
+      box-shadow: 0 0 0 3px var(--red), 3px 3px 0 rgba(0,0,0,.18);
+    }
+    .tile.selected .stamp {
+      background: var(--red); border-color: var(--yellow); color: #fff;
+      animation: stamp .28s cubic-bezier(.2,1.6,.3,1) forwards;
+    }
+    @keyframes stamp {
+      0% { opacity:0; transform: scale(1.6) rotate(-18deg); }
+      70% { opacity:1; transform: scale(.92) rotate(6deg); }
+      100% { opacity:1; transform: scale(1) rotate(-8deg); }
+    }
+
+    .tile.add {
+      background: repeating-linear-gradient(135deg, #FFE58A 0 10px, #FFD23F 10px 20px);
+      color: var(--ink); display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 6px; min-height: 168px;
+    }
+    .tile.add .plus { font-family: "Bebas Neue", sans-serif; font-size: 54px; line-height: .8; }
+    .tile.add .cap { position: static; background: none; color: var(--ink); padding: 0; }
+
+    .dock {
+      position: absolute; left: 0; right: 0; bottom: 0;
+      padding: 10px 14px var(--safe);
+      background: linear-gradient(to top, var(--bg) 72%, transparent);
+    }
+    .hint { text-align: center; font-size: 12px; font-weight: 800; color: var(--muted); margin-bottom: 8px; min-height: 16px; }
+    .cta {
+      width: 100%; border: 3px solid var(--ink); background: var(--red); color: #fff;
+      font-family: "Bebas Neue", sans-serif; font-size: 26px; letter-spacing: 1px;
+      padding: 14px 12px 12px; border-radius: 14px; box-shadow: 0 5px 0 var(--red-deep);
+      cursor: pointer; transition: transform .1s ease, box-shadow .1s ease, background .2s ease;
+    }
+    .cta:disabled { background: #CDB897; box-shadow: 0 5px 0 #9A8668; color: #5A4C3B; cursor: not-allowed; }
+    .cta:not(:disabled):active { transform: translateY(3px); box-shadow: 0 2px 0 var(--red-deep); }
+    .cta.ready { animation: glow .6s ease; }
+    @keyframes glow { 50% { filter: brightness(1.12); } }
+
+    .sheet {
+      position: absolute; inset: 0; background: rgba(12,8,6,.55);
+      display: none; align-items: flex-end; z-index: 20;
+    }
+    .sheet.open { display: flex; }
+    .panel {
+      width: 100%; background: var(--bg); border-top: 4px solid var(--ink);
+      border-radius: 22px 22px 0 0; padding: 12px 14px calc(var(--safe) + 10px);
+    }
+    .grab { width: 46px; height: 5px; background: var(--ink); border-radius: 99px; margin: 0 auto 10px; }
+    .panel h2 { font-family: "Bebas Neue", sans-serif; font-size: 26px; text-align: center; letter-spacing: .4px; }
+    .panel .sub { text-align: center; font-size: 13px; font-weight: 800; color: var(--muted); margin: 2px 0 10px; }
+    .row { display: flex; gap: 8px; }
+    .emoji-btn, .field, .save, .cancel {
+      border: 3px solid var(--ink); border-radius: 12px; font: inherit; font-weight: 900;
+    }
+    .emoji-btn { width: 62px; background: var(--yellow); font-size: 26px; }
+    .field { flex: 1; padding: 12px; background: #fff; font-size: 16px; }
+    .emoji-row { display: flex; gap: 6px; overflow-x: auto; padding: 10px 0 6px; }
+    .emoji-row button {
+      flex: 0 0 42px; height: 42px; border: 2px solid var(--ink); background: #fff;
+      border-radius: 10px; font-size: 20px; cursor: pointer;
+    }
+    .emoji-row button.on { background: var(--yellow); }
+    .error { color: var(--red-deep); font-weight: 800; font-size: 13px; min-height: 18px; text-align: center; }
+    .actions { display: flex; gap: 8px; margin-top: 4px; }
+    .save, .cancel { flex: 1; padding: 12px 8px; cursor: pointer; }
+    .save { background: var(--red); color: #fff; font-family: "Bebas Neue", sans-serif; font-size: 20px; }
+    .cancel { background: #fff; }
+
+    .splash {
+      position: absolute; inset: 0; background: var(--red); color: #fff;
+      display: none; place-items: center; text-align: center; z-index: 30;
+    }
+    .splash.show { display: grid; }
+    .splash h2 {
+      font-family: "Bebas Neue", sans-serif; font-size: 64px; letter-spacing: 1px;
+      transform: rotate(-6deg); animation: stamp .4s cubic-bezier(.2,1.5,.3,1);
+      text-shadow: 4px 4px 0 var(--ink);
+    }
+    .splash p { font-weight: 800; margin-top: 8px; }
+
+    .home { display: none; flex-direction: column; height: 100%; }
+    .home.show { display: flex; }
+    .onboarding.hide { display: none; }
+    .home-body { padding: 16px 16px 24px; }
+    .home-body h1 { font-family: "Bebas Neue", sans-serif; font-size: 32px; }
+    .pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    .pill {
+      display: flex; align-items: center; gap: 8px;
+      border: 2.5px solid var(--ink); background: #fff; border-radius: 999px;
+      padding: 5px 12px 5px 5px; font-weight: 900; font-size: 13px;
+    }
+    .pill img, .pill .mini {
+      width: 34px; height: 34px; border-radius: 50%; object-fit: cover; background: var(--yellow);
+      display: grid; place-items: center; font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="status"><span>9:41</span><span>●●● LTE</span></div>
+
+    <section class="onboarding" id="onboarding">
+      <header class="menu-head">
+        <div class="brand">WHAT’S FOR <em>TEA?</em></div>
+        <div class="tag">Your regulars · pick &amp; go</div>
+      </header>
+      <div class="copy">
+        <h1>WHAT DO YOU USUALLY HAVE FOR TEA?</h1>
+        <p>Pick a few favourites or add your own. You can change them later.</p>
+        <div class="live" id="live"></div>
+      </div>
+      <div class="board">
+        <div class="grid" id="grid"></div>
+      </div>
+      <div class="dock">
+        <div class="hint" id="hint">Pick at least one to continue</div>
+        <button class="cta" id="cta" disabled>LET’S EAT</button>
+      </div>
+    </section>
+
+    <section class="home" id="home">
+      <header class="menu-head">
+        <div class="brand">FORGOTTEN <em>FAVOURITES</em></div>
+        <div class="tag">Only what you picked was saved</div>
+      </header>
+      <div class="home-body">
+        <h1>YOUR BOARD</h1>
+        <p style="font-weight:800;color:var(--muted);margin-top:4px">Ready when you are.</p>
+        <div class="pills" id="saved"></div>
+      </div>
+    </section>
+
+    <div class="sheet" id="sheet">
+      <div class="panel">
+        <div class="grab"></div>
+        <h2>ADD YOUR OWN</h2>
+        <p class="sub">Name it. Emoji optional — we’ll use 🍽️.</p>
+        <div class="row">
+          <button class="emoji-btn" id="emojiPick" type="button">🍽️</button>
+          <input class="field" id="customName" maxlength="28" placeholder="e.g. Egg & chips" autocomplete="off" />
+        </div>
+        <div class="emoji-row" id="emojiRow"></div>
+        <div class="error" id="error"></div>
+        <div class="actions">
+          <button class="cancel" id="cancelAdd" type="button">Cancel</button>
+          <button class="save" id="saveAdd" type="button">ADD IT</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="splash" id="splash">
+      <div>
+        <h2>SORTED.</h2>
+        <p>Tucking your teas away…</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const img = (url) => url;
+    const seeds = [
+      { name: "Sausage & Chips", emoji: "🌭", photo: "https://images.pexels.com/photos/1893556/pexels-photo-1893556.jpeg?auto=compress&cs=tinysrgb&w=800" },
+      { name: "Chicken Curry", emoji: "🍛", photo: "https://images.pexels.com/photos/2474661/pexels-photo-2474661.jpeg?auto=compress&cs=tinysrgb&w=800" },
+      { name: "Lasagne", emoji: "🍝", photo: "https://images.pexels.com/photos/4079520/pexels-photo-4079520.jpeg?auto=compress&cs=tinysrgb&w=800" },
+      { name: "Cottage Pie", emoji: "🥧", photo: "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?auto=format&fit=crop&w=800&q=80" },
+      { name: "Fish Pie", emoji: "🐟", photo: "https://images.pexels.com/photos/262959/pexels-photo-262959.jpeg?auto=compress&cs=tinysrgb&w=800" },
+      { name: "Chilli", emoji: "🌶️", photo: "https://images.pexels.com/photos/5737247/pexels-photo-5737247.jpeg?auto=compress&cs=tinysrgb&w=800" },
+      { name: "Pizza", emoji: "🍕", photo: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=80" },
+      { name: "Roast Dinner", emoji: "🍗", photo: "https://images.pexels.com/photos/2338407/pexels-photo-2338407.jpeg?auto=compress&cs=tinysrgb&w=800" },
+      { name: "Stir Fry", emoji: "🥡", photo: "https://images.pexels.com/photos/2347311/pexels-photo-2347311.jpeg?auto=compress&cs=tinysrgb&w=800" },
+      { name: "Jacket Potato", emoji: "🥔", photo: "https://images.pexels.com/photos/2284166/pexels-photo-2284166.jpeg?auto=compress&cs=tinysrgb&w=800" }
+    ];
+    /* Cottage pie fallback if the lasagne-looking unsplash id mismatches */
+    seeds[3].photo = "https://images.pexels.com/photos/675951/pexels-photo-675951.jpeg?auto=compress&cs=tinysrgb&w=800";
+
+    const emojis = ["🍽️","🌭","🍛","🍝","🥧","🐟","🌶️","🍕","🍗","🥡","🥔","🍔","🥗","🍜","🌮","🥘"];
+    const selected = new Set();
+    const meals = seeds.map(m => ({...m}));
+    const norm = s => s.trim().replace(/\s+/g," ").toLowerCase();
+
+    const grid = document.getElementById("grid");
+    const cta = document.getElementById("cta");
+    const hint = document.getElementById("hint");
+    const live = document.getElementById("live");
+    const sheet = document.getElementById("sheet");
+    const emojiPick = document.getElementById("emojiPick");
+    const customName = document.getElementById("customName");
+    const errorEl = document.getElementById("error");
+    const emojiRow = document.getElementById("emojiRow");
+
+    function photoEl(meal) {
+      if (meal.photo) {
+        return `<img src="${meal.photo}" alt="${meal.name}" loading="lazy" onerror="this.outerHTML='<div class=ph>${meal.emoji}</div>'">`;
+      }
+      return `<div class="ph">${meal.emoji || "🍽️"}</div>`;
+    }
+
+    function render() {
+      grid.innerHTML = "";
+      meals.forEach(meal => {
+        const key = norm(meal.name);
+        const on = selected.has(key);
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "tile" + (on ? " selected" : "");
+        btn.innerHTML = `${photoEl(meal)}<span class="stamp">✓</span><span class="cap">${meal.name}</span>`;
+        btn.onclick = () => {
+          if (selected.has(key)) selected.delete(key);
+          else selected.add(key);
+          render();
+        };
+        grid.appendChild(btn);
+      });
+      const add = document.createElement("button");
+      add.type = "button";
+      add.className = "tile add";
+      add.innerHTML = `<div class="plus">+</div><span class="cap">Add your own</span>`;
+      add.onclick = openSheet;
+      grid.appendChild(add);
+      updateCta();
+    }
+
+    function updateCta() {
+      const n = selected.size;
+      const was = cta.disabled;
+      cta.disabled = n === 0;
+      if (was && n === 1) cta.classList.add("ready");
+      hint.textContent = n === 0 ? "Pick at least one to continue" : n === 1 ? "1 regular locked in" : `${n} regulars locked in`;
+      live.textContent = n === 0 ? "" : n === 1 ? "Nice. One down." : n >= 4 ? "Proper menu, that." : "That’s more like it.";
+    }
+
+    function openSheet() {
+      customName.value = "";
+      emojiPick.textContent = "🍽️";
+      errorEl.textContent = "";
+      sheet.classList.add("open");
+      highlightEmoji("🍽️");
+      setTimeout(() => customName.focus(), 40);
+    }
+    const closeSheet = () => sheet.classList.remove("open");
+
+    emojiRow.innerHTML = emojis.map(e => `<button type="button" data-e="${e}">${e}</button>`).join("");
+    function highlightEmoji(e) {
+      emojiRow.querySelectorAll("button").forEach(b => b.classList.toggle("on", b.dataset.e === e));
+    }
+    emojiRow.onclick = e => {
+      const b = e.target.closest("button");
+      if (!b) return;
+      emojiPick.textContent = b.dataset.e;
+      highlightEmoji(b.dataset.e);
+    };
+    emojiPick.onclick = () => customName.focus();
+
+    customName.addEventListener("input", () => {
+      const name = customName.value.trim().replace(/\s+/g," ");
+      if (name && meals.some(m => norm(m.name) === norm(name))) {
+        errorEl.textContent = "Looks like you’ve already got that one.";
+      } else errorEl.textContent = "";
+    });
+
+    document.getElementById("cancelAdd").onclick = closeSheet;
+    document.getElementById("saveAdd").onclick = () => {
+      const name = customName.value.trim().replace(/\s+/g," ");
+      if (!name) { errorEl.textContent = "Give it a name first."; return; }
+      if (meals.some(m => norm(m.name) === norm(name))) {
+        errorEl.textContent = "You’ve already got that one."; return;
+      }
+      meals.push({ name, emoji: emojiPick.textContent || "🍽️" });
+      selected.add(norm(name));
+      closeSheet();
+      render();
+      document.querySelector(".board").scrollTop = 9999;
+    };
+
+    cta.onclick = () => {
+      if (!selected.size) return;
+      const saved = meals.filter(m => selected.has(norm(m.name)));
+      const splash = document.getElementById("splash");
+      splash.classList.add("show");
+      setTimeout(() => {
+        splash.classList.remove("show");
+        document.getElementById("onboarding").classList.add("hide");
+        document.getElementById("home").classList.add("show");
+        document.getElementById("saved").innerHTML = saved.map(m => {
+          const thumb = m.photo
+            ? `<img src="${m.photo}" alt="">`
+            : `<span class="mini">${m.emoji || "🍽️"}</span>`;
+          return `<span class="pill">${thumb}${m.name}</span>`;
+        }).join("");
+      }, 700);
+    };
+
+    render();
+  </script>
+</body>
+</html>
