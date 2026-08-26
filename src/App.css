@@ -491,6 +491,20 @@
   opacity: 0.55;
 }
 
+.planner-row.dragging {
+  opacity: 0.6;
+  transform: scale(1.03);
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.14);
+  z-index: 5;
+  position: relative;
+}
+
+.planner-row.drop-target {
+  outline: 3px dashed var(--red);
+  outline-offset: 2px;
+  background: #fff7e0;
+}
+
 .planner-day {
   width: 38px;
   font-family: "Bebas Neue", sans-serif;

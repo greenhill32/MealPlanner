@@ -47,7 +47,13 @@ export default function App() {
           <Home meals={meals} weekPlan={weekPlan} todayIndex={app.todayIndex} onTapToday={app.tapToday} />
         )}
         {app.screen === "planner" && (
-          <Planner weekPlan={weekPlan} meals={meals} todayIndex={app.todayIndex} onTapDay={app.tapDay} />
+          <Planner
+            weekPlan={weekPlan}
+            meals={meals}
+            todayIndex={app.todayIndex}
+            onTapDay={app.tapDay}
+            onSwapDays={app.swapDays}
+          />
         )}
         {app.screen === "meals" && (
           <Meals meals={meals} onEdit={app.openMealsEdit} onDelete={app.deleteMeal} onAdd={app.openMealsAdd} />

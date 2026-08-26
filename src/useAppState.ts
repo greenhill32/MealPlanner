@@ -234,6 +234,27 @@ export function useAppState() {
     openPlanAdd(p.dayIndex, p.purpose);
   }
 
+  function swapDays(fromIndex: number, toIndex: number) {
+    if (!persisted || fromIndex === toIndex) return;
+    const from = persisted.weekPlan[fromIndex];
+    const to = persisted.weekPlan[toIndex];
+    if (!from || !to) return;
+    if (from.status !== "planned" || from.mealId == null) return;
+    if (to.status === "eaten" || to.status === "skipped") return;
+    setPersisted((s) =>
+      s
+        ? {
+            ...s,
+            weekPlan: s.weekPlan.map((row, i) => {
+              if (i === fromIndex) return { ...row, mealId: to.mealId, status: to.status };
+              if (i === toIndex) return { ...row, mealId: from.mealId, status: from.status };
+              return row;
+            }),
+          }
+        : s
+    );
+  }
+
   function setScreen(sc: Screen) {
     setScreenState(sc);
   }
@@ -268,6 +289,7 @@ export function useAppState() {
     closePicker,
     pickMeal,
     openPlanAddFromPicker,
+    swapDays,
     setScreen,
   };
 }
