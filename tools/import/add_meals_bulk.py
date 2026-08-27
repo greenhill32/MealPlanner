@@ -1,6 +1,4 @@
-from pathlib import Path
-
-script = r'''#!/usr/bin/env python3
+#!/usr/bin/env python3
 """Bulk import meal photos into the MealPlanner catalogue.
 
 Drop images into a folder with friendly filenames, for example:
@@ -20,8 +18,8 @@ The script:
 - optionally pushes to origin
 
 Usage:
-    python tools/add_meals_bulk.py
-    python tools/add_meals_bulk.py "C:\\path\\to\\meal_photos"
+    python tools/import/add_meals_bulk.py
+    python tools/import/add_meals_bulk.py "C:\\path\\to\\meal_photos"
 
 Safe by default:
 - asks for confirmation before changing files
@@ -42,7 +40,7 @@ ENCODING = "utf-8"
 DEFAULT_EMOJI = "🍽️"
 SUPPORTED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".gif"}
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 DATA_TS = REPO_ROOT / "src" / "data.ts"
 ASSETS_DIR = REPO_ROOT / "src" / "assets" / "meals"
 
@@ -159,7 +157,7 @@ def add_new_entry(
 def main() -> None:
     if not DATA_TS.is_file():
         sys.exit(
-            f"Can't find {DATA_TS}. Put this file in MealPlanner/tools/."
+            f"Can't find {DATA_TS}. Put this file in MealPlanner/tools/import/."
         )
 
     if len(sys.argv) > 1:
@@ -295,8 +293,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-'''
-
-out = Path("/mnt/data/add_meals_bulk.py")
-out.write_text(script, encoding="utf-8")
-print(out)
