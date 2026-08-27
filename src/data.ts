@@ -1,6 +1,11 @@
 import type { CatalogItem } from "./types";
+import imgCrispChilliBeef from "./assets/meals/crisp-chilli-beef.jpeg";
+import imgHamAndEggAndChips from "./assets/meals/ham-and-egg-and-chips.jpeg";
 
-const RAW_CATALOG: Omit<CatalogItem, "id">[] = [];
+const RAW_CATALOG: Omit<CatalogItem, "id">[] = [
+  { name: "Crisp chilli beef", emoji: "🍽️", photo: imgCrispChilliBeef, def: 5 },
+  { name: "Ham and egg and chips", emoji: "🍽️", photo: imgHamAndEggAndChips, def: 5 },
+];
 
 export const CATALOG: CatalogItem[] = RAW_CATALOG.map((c, i) => ({ id: `c${i}`, ...c }));
 
